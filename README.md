@@ -640,4 +640,4 @@ INFO:     Uvicorn running on http://127.0.0.1:8000
 
 А в браузере открывается http://127.0.0.1:8000/docs
 
-**ТЫ ВСЁ СДЕЛАЛА ПРАВИЛЬНО!** 🚀
+ghbdtn vbh vfythf rhenbn vbh
