@@ -523,10 +523,10 @@ arthouse-backend/
      ```
 
 ---
+## не избегай критики кода и системы, постоянно ищи способы сделать лучше!!! 
+##  Устранение проблем (что делать если...)
 
-## 🔧 Устранение проблем (что делать если...)
-
-### ❌ "psql не найдена"
+### "psql не найдена"
 ```powershell
 # Найди, где установлен PostgreSQL:
 dir "C:\Program Files\PostgreSQL\"
@@ -534,19 +534,19 @@ dir "C:\Program Files\PostgreSQL\"
 $env:Path += ";C:\Program Files\PostgreSQL\15\bin"
 ```
 
-### ❌ "password authentication failed"
+###  "password authentication failed"
 ```env
 # В .env просто оставь пароль пустым:
 POSTGRES_PASSWORD=
 ```
 
-### ❌ "database does not exist"
+###  "database does not exist"
 ```powershell
 # Создай базу заново:
 psql -U postgres -c "CREATE DATABASE arthouse_db;"
 ```
 
-### ❌ "port already in use"
+###  "port already in use"
 ```powershell
 # Найди процесс на порту 8000:
 netstat -ano | findstr :8000
@@ -554,19 +554,19 @@ netstat -ano | findstr :8000
 taskkill /PID 12345 /F
 ```
 
-### ❌ "ModuleNotFoundError"
+### "ModuleNotFoundError"
 ```bash
 # Переустанови все зависимости:
 pip install -r requirements.txt --force-reinstall
 ```
 
-### ❌ "Документация не открывается"
+### "Документация не открывается"
 Проверь в `.env`:
 ```env
 DEBUG=True  # Должно быть True
 ```
 
-### ❌ "Всё сломалось, хочу начать заново"
+### "Всё сломалось, хочу начать заново"
 ```powershell
 # Удали БД и создай заново:
 psql -U postgres -c "DROP DATABASE IF EXISTS arthouse_db;"
@@ -577,7 +577,7 @@ python run.py
 
 ---
 
-## 💡 Полезные команды (шпаргалка)
+## Полезные команды (шпаргалка)
 
 ```powershell
 # Активировать окружение (Windows)
@@ -607,7 +607,7 @@ psql -U postgres -d arthouse_db -c "\dt"
 
 ---
 
-## 🏃‍♀️ Самые быстрые команды (копируй и вставляй)
+## Самые быстрые команды (копируй и вставляй)
 
 ### Windows PowerShell (одной строкой):
 ```powershell
@@ -621,7 +621,7 @@ python3 -m venv venv && source venv/bin/activate && pip install -r requirements.
 
 ---
 
-## 📞 Если ничего не помогает
+## Если ничего не помогает
 
 1. **Проверь логи** - они обычно пишут, в чём проблема
 2. **Перезапусти всё** - компьютер, PostgreSQL, сервер
