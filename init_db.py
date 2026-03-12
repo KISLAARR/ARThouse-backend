@@ -9,7 +9,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.core.database import engine, Base
-from app.models import user, apartment  # Импортируем все модели
+from app.models import user, apartment, survey  # Импортируем все модели
 
 
 def init_database():
