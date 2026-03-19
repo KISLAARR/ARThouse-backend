@@ -1,4 +1,9 @@
-﻿"""
+# Создать резервную копию
+copy app\core\database.py app\core\database.py.bak
+
+# Записать исправленный файл
+@"
+"""
 Настройка подключения к PostgreSQL через SQLAlchemy.
 """
 from sqlalchemy import create_engine
@@ -25,13 +30,14 @@ Base = declarative_base()
 
 
 def get_db() -> Generator[Session, None, None]:
-    """
+    \"\"\"
     Dependency для FastAPI.
     Создаёт новую сессию БД для каждого запроса.
     Автоматически закрывает сессию после запроса.
-    """
+    \"\"\"
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+"@ | Out-File -FilePath app\core\database.py -Encoding UTF8

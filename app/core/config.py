@@ -1,90 +1,69 @@
 """
-<<<<<<< HEAD
-Настройки приложения из .env файла.
-Pydantic Settings автоматически читает переменные окружения.
+Настройки приложения.
 """
-from typing import Optional
+from typing import Optional, List
 from pydantic_settings import BaseSettings
-from pydantic import PostgresDsn, validator
+from pydantic import validator, PostgresDsn, model_validator
 
 
 class Settings(BaseSettings):
-    """Все настройки приложения в одном месте"""
-    
-    # --- Настройки приложения ---
-    APP_NAME: str = "ARThouse API"
-    APP_VERSION: str = "0.1.0"
+    """
+    Класс настроек приложения.
+    Загружает переменные из .env файла.
+    """
+    # Проект
+    PROJECT_NAME: str = "ARThouse API"
+    VERSION: str = "1.0.0"
+    API_V1_STR: str = "/api/v1"
     DEBUG: bool = False
-    API_V1_PREFIX: str = "/api/v1"
-    
-    # --- Настройки сервера ---
-    HOST: str = "127.0.0.1"
-    PORT: int = 8000
-    
-    # --- Настройки базы данных ---
+
+    # База данных - отдельные компоненты
     POSTGRES_SERVER: str = "localhost"
     POSTGRES_USER: str = "postgres"
     POSTGRES_PASSWORD: str = "postgres"
-    POSTGRES_DB: str = "arthouse_db"
+    POSTGRES_DB: str = "arthouse"
     POSTGRES_PORT: str = "5432"
     
-    @property
-    def DATABASE_URL(self) -> str:
-        """Формируем строку подключения к БД"""
-        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
-    
-    # --- Настройки безопасности ---
+    # Собираем DATABASE_URL из компонентов, если он не задан явно
+    DATABASE_URL: Optional[str] = None
+
+    # Безопасность
     SECRET_KEY: str = "your-secret-key-here-change-in-production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
-    class Config:
-        """Говорим Pydantic читать из .env файла"""
-=======
-Конфигурация приложения из переменных окружения
-"""
-from pydantic_settings import BaseSettings
-from functools import lru_cache
+    # CORS
+    BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
+    
+    @validator("BACKEND_CORS_ORIGINS", pre=True)
+    def assemble_cors_origins(cls, v):
+        if isinstance(v, str) and not v.startswith("["):
+            return [i.strip() for i in v.split(",")]
+        elif isinstance(v, list):
+            return v
+        return []
 
+    @model_validator(mode="after")
+    def assemble_db_connection(self) -> "Settings":
+        """Собираем DATABASE_URL из компонентов, если он не задан явно."""
+        if not self.DATABASE_URL:
+            self.DATABASE_URL = str(
+                PostgresDsn.build(
+                    scheme="postgresql",
+                    username=self.POSTGRES_USER,
+                    password=self.POSTGRES_PASSWORD,
+                    host=self.POSTGRES_SERVER,
+                    port=int(self.POSTGRES_PORT),
+                    path=f"{self.POSTGRES_DB or ''}",
+                )
+            )
+        return self
 
-class Settings(BaseSettings):
-    """Настройки приложения"""
-    
-    # Database
-    POSTGRES_SERVER: str = "localhost"
-    POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str = ""
-    POSTGRES_DB: str = "arthouse_db"
-    POSTGRES_PORT: int = 5432
-    
-    # JWT
-    SECRET_KEY: str = "your-secret-key-change-in-production-123456789"
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
-    
-    # App
-    APP_NAME: str = "КРОВ API"
-    DEBUG: bool = True
-    API_V1_PREFIX: str = "/api/v1"
-    
-    @property
-    def DATABASE_URL(self) -> str:
-        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
-    
     class Config:
->>>>>>> 7a2eea49b24341b939241f3433708164a87b6511
         env_file = ".env"
         case_sensitive = True
+        # Разрешаем лишние поля, если они вдруг появятся, но лучше их явно описать
+        extra = "ignore" 
 
 
-<<<<<<< HEAD
-# Создаём глобальный экземпляр настроек
 settings = Settings()
-=======
-@lru_cache()
-def get_settings() -> Settings:
-    return Settings()
-
-
-settings = get_settings()
->>>>>>> 7a2eea49b24341b939241f3433708164a87b6511
