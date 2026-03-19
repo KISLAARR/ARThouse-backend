@@ -26,3 +26,7 @@ class Apartment(Base):
     # Связи
     user = relationship("User", back_populates="apartments")
     surveys = relationship("Survey", back_populates="apartment", cascade="all, delete-orphan")
+    rooms = relationship("Room", back_populates="apartment", cascade="all, delete-orphan")
+    tasks = relationship("Task", back_populates="apartment", cascade="all, delete-orphan")
+    members = relationship("HouseholdMember", back_populates="apartment", cascade="all, delete-orphan")
+    snapshots = relationship("ApartmentSnapshot", back_populates="apartment", cascade="all, delete-orphan")
