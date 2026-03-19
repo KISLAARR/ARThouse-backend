@@ -483,7 +483,6 @@ arthouse-backend/
 | PUT | `/api/v1/apartments/my/{id}` | Обновить квартиру | ✅ |
 | DELETE | `/api/v1/apartments/my/{id}` | Удалить квартиру | ✅ |
 
----
 
 ## 🧪 Тестирование API через Swagger
 
