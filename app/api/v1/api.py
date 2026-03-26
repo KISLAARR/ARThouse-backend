@@ -1,9 +1,5 @@
-"""
-Сборка всех роутеров API v1.
-"""
 from fastapi import APIRouter
-
-from app.api.v1.endpoints import auth, users, apartments, surveys
+from app.api.v1.endpoints import auth, users, apartments, surveys, snapshots
 
 api_router = APIRouter()
 
@@ -11,3 +7,4 @@ api_router.include_router(auth.router)
 api_router.include_router(users.router)
 api_router.include_router(apartments.router)
 api_router.include_router(surveys.router)
+api_router.include_router(snapshots.router)  # ← добавить
