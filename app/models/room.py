@@ -1,7 +1,7 @@
 """
 Модель комнаты/помещения внутри квартиры.
 """
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Index
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
@@ -9,6 +9,7 @@ from app.core.database import Base
 
 
 class Room(Base):
+    """Модель комнаты"""
     __tablename__ = "rooms"
     
     id = Column(Integer, primary_key=True, index=True)
@@ -30,3 +31,8 @@ class Room(Base):
     # Связи
     apartment = relationship("Apartment", back_populates="rooms")
     tasks = relationship("Task", back_populates="room", cascade="all, delete-orphan")
+    
+    # Индексы
+    __table_args__ = (
+        Index('idx_rooms_apartment', 'apartment_id'),
+    )
