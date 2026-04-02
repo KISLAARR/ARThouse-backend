@@ -1,5 +1,5 @@
 """
-Pydantic схемы для задач.
+Pydantic схемы для задач (Task).
 """
 from pydantic import BaseModel, Field
 from typing import Optional
@@ -7,28 +7,56 @@ from datetime import datetime
 
 
 class TaskBase(BaseModel):
-    """Общая схема задачи"""
-    title: str = Field(..., min_length=1, max_length=150)
+    """Базовая схема задачи"""
+    title: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = Field(None, max_length=1000)
-    status: str = Field(default="pending")
-    priority: str = Field(default="medium")
+    
+    status: Optional[str] = Field(
+        default="pending",
+        description="Статус задачи: pending, in_progress, completed"
+    )
+    
+    priority: Optional[int] = Field(
+        default=1,
+        ge=1,
+        le=5,
+        description="Приоритет задачи (1-5)"
+    )
+    
     due_date: Optional[datetime] = None
-    room_id: Optional[int] = None
-    assigned_to: Optional[int] = None
+    
+    room_id: Optional[int] = Field(
+        None,
+        description="ID комнаты"
+    )
+    
+    assigned_to: Optional[int] = Field(
+        None,
+        description="ID пользователя или робота"
+    )
 
 
-# --- Схемы для запросов ---
 class TaskCreate(TaskBase):
-    """Создание новой задачи"""
-    apartment_id: int = Field(..., gt=0)
+    """Создание задачи"""
+    apartment_id: int = Field(..., description="ID квартиры")
 
 
 class TaskUpdate(BaseModel):
-    """Обновление существующей задачи (все поля опциональны)"""
-    title: Optional[str] = Field(None, min_length=1, max_length=150)
+    """Обновление задачи (все поля опциональны)"""
+    title: Optional[str] = Field(None, min_length=1, max_length=200)
     description: Optional[str] = Field(None, max_length=1000)
-    status: Optional[str] = Field(None)
-    priority: Optional[str] = Field(None)
+    
+    status: Optional[str] = Field(
+        None,
+        description="Статус задачи"
+    )
+    
+    priority: Optional[int] = Field(
+        None,
+        ge=1,
+        le=5
+    )
+    
     due_date: Optional[datetime] = None
     room_id: Optional[int] = None
     assigned_to: Optional[int] = None
@@ -36,10 +64,12 @@ class TaskUpdate(BaseModel):
 
 class TaskStatusUpdate(BaseModel):
     """Обновление только статуса задачи"""
-    status: str = Field(...)
+    status: str = Field(
+        ...,
+        description="Новый статус задачи"
+    )
 
 
-# --- Схемы для ответов ---
 class TaskResponse(TaskBase):
     """Ответ с данными задачи"""
     id: int
