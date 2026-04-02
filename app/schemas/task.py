@@ -7,7 +7,6 @@ from datetime import datetime
 
 
 class TaskBase(BaseModel):
-    """Базовая схема задачи"""
     title: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = Field(None, max_length=1000)
     
@@ -37,12 +36,10 @@ class TaskBase(BaseModel):
 
 
 class TaskCreate(TaskBase):
-    """Создание задачи"""
     apartment_id: int = Field(..., description="ID квартиры")
 
 
 class TaskUpdate(BaseModel):
-    """Обновление задачи (все поля опциональны)"""
     title: Optional[str] = Field(None, min_length=1, max_length=200)
     description: Optional[str] = Field(None, max_length=1000)
     
@@ -63,7 +60,6 @@ class TaskUpdate(BaseModel):
 
 
 class TaskStatusUpdate(BaseModel):
-    """Обновление только статуса задачи"""
     status: str = Field(
         ...,
         description="Новый статус задачи"
@@ -71,7 +67,6 @@ class TaskStatusUpdate(BaseModel):
 
 
 class TaskResponse(TaskBase):
-    """Ответ с данными задачи"""
     id: int
     apartment_id: int
     created_at: datetime
