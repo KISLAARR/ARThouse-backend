@@ -1,36 +1,47 @@
 """
-Модель комнаты/помещения внутри квартиры.
+Pydantic схемы для комнаты.
 """
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Index
-from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship
-
-from app.core.database import Base
+from pydantic import BaseModel, Field
+from typing import Optional
+from datetime import datetime
 
 
-class Room(Base):
-    """Модель комнаты"""
-    __tablename__ = "rooms"
-    
-    id = Column(Integer, primary_key=True, index=True)
-    apartment_id = Column(Integer, ForeignKey("apartments.id", ondelete="CASCADE"), nullable=False)
-    name = Column(String, nullable=False)  # "Кухня", "Спальня" и т.д.
-    room_type = Column(String, nullable=True)  # kitchen, bedroom, bathroom, living и т.д.
-    floor = Column(Integer, nullable=True)  # Этаж (если многоэтажная квартира)
-    area = Column(Float, nullable=True)  # Площадь комнаты
-    
-    # Координаты на карте (для визуализации)
-    position_x = Column(Float, nullable=True)
-    position_y = Column(Float, nullable=True)
-    width = Column(Float, nullable=True)
-    height = Column(Float, nullable=True)
-    
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-    
-    # Связи
-    apartment = relationship("Apartment", back_populates="rooms")
-    tasks = relationship("Task", back_populates="room", cascade="all, delete-orphan")
+class RoomBase(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+    room_type: Optional[str] = Field(None, max_length=50)
+    floor: Optional[int] = Field(None, ge=0, le=100)
+    area: Optional[float] = Field(None, ge=0.0, le=1000.0)
+
+    position_x: Optional[float] = None
+    position_y: Optional[float] = None
+    width: Optional[float] = Field(None, ge=0.0)
+    height: Optional[float] = Field(None, ge=0.0)
+
+
+class RoomCreate(RoomBase):
+    apartment_id: int
+
+
+class RoomUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    room_type: Optional[str] = Field(None, max_length=50)
+    floor: Optional[int] = Field(None, ge=0, le=100)
+    area: Optional[float] = Field(None, ge=0.0, le=1000.0)
+
+    position_x: Optional[float] = None
+    position_y: Optional[float] = None
+    width: Optional[float] = Field(None, ge=0.0)
+    height: Optional[float] = Field(None, ge=0.0)
+
+
+class RoomResponse(RoomBase):
+    id: int
+    apartment_id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
     
     # Индексы
     __table_args__ = (
