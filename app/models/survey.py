@@ -1,7 +1,7 @@
-﻿"""
-одель для хранения опросов о помещении.
 """
-from sqlalchemy import Column, Integer, Float, ForeignKey, DateTime, Boolean, JSON
+Модель для хранения опросов о помещении.
+"""
+from sqlalchemy import Column, Integer, Float, ForeignKey, DateTime, Boolean, JSON, String
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
@@ -21,6 +21,27 @@ class Survey(Base):
     ceiling_height = Column(Float, nullable=True)
     
     additional_info = Column(JSON, nullable=True)
+    
+    property_type = Column(String, nullable=True)
+
+    total_area = Column(Float, nullable=True)
+    total_area_unit = Column(String, nullable=True) 
+
+    ceiling_height_unit = Column(String, nullable=True)
+
+    floors_count = Column(Integer, nullable=True)
+
+    rooms_details = Column(JSON, nullable=True)  
+
+    residents = Column(JSON, nullable=True)
+
+    activities = Column(JSON, nullable=True) 
+    priorities = Column(JSON, nullable=True) 
+    problem_areas = Column(JSON, nullable=True)  
+    style_preferences = Column(JSON, nullable=True)  
+
+    photos_paths = Column(JSON, nullable=True)
+    floor_plan_path = Column(String, nullable=True)
     
     is_completed = Column(Boolean, default=False)
     completion_percentage = Column(Integer, default=0)
