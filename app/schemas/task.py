@@ -1,36 +1,52 @@
+"""
+Pydantic схемы для задач.
+"""
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
 
+
 class TaskBase(BaseModel):
-    title: str = Field(..., min_length=1, max_length=255, description="Название задачи")
-    description: Optional[str] = Field(None, description="Описание задачи")
-    status: str = Field("pending", description="Статус: pending, in_progress, completed, cancelled")
-    priority: str = Field("medium", description="Приоритет: low, medium, high")
-    due_date: Optional[datetime] = Field(None, description="Дедлайн выполнения")
-    room_id: Optional[int] = Field(None, description="ID комнаты")
-    assigned_to: Optional[int] = Field(None, description="ID пользователя-исполнителя")
-
-class TaskCreate(TaskBase):
-    apartment_id: int = Field(..., description="ID квартиры, к которой привязана задача")
-
-class TaskUpdate(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    status: Optional[str] = None
-    priority: Optional[str] = None
+    """Общая схема задачи"""
+    title: str = Field(..., min_length=1, max_length=150)
+    description: Optional[str] = Field(None, max_length=1000)
+    status: str = Field(default="pending")
+    priority: str = Field(default="medium")
     due_date: Optional[datetime] = None
     room_id: Optional[int] = None
     assigned_to: Optional[int] = None
 
-class TaskStatusUpdate(BaseModel):
-    status: str = Field(..., description="Новый статус задачи")
 
+# --- Схемы для запросов ---
+class TaskCreate(TaskBase):
+    """Создание новой задачи"""
+    apartment_id: int = Field(..., gt=0)
+
+
+class TaskUpdate(BaseModel):
+    """Обновление существующей задачи (все поля опциональны)"""
+    title: Optional[str] = Field(None, min_length=1, max_length=150)
+    description: Optional[str] = Field(None, max_length=1000)
+    status: Optional[str] = Field(None)
+    priority: Optional[str] = Field(None)
+    due_date: Optional[datetime] = None
+    room_id: Optional[int] = None
+    assigned_to: Optional[int] = None
+
+
+class TaskStatusUpdate(BaseModel):
+    """Обновление только статуса задачи"""
+    status: str = Field(...)
+
+
+# --- Схемы для ответов ---
 class TaskResponse(TaskBase):
+    """Ответ с данными задачи"""
     id: int
     apartment_id: int
     created_at: datetime
-    updated_at: datetime
+    updated_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
 
-    model_config = {"from_attributes": True}
+    class Config:
+        from_attributes = True
