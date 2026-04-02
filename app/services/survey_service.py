@@ -33,20 +33,39 @@ class SurveyService:
     
     def create_survey(self, user_id: int, survey_data: SurveyCreate) -> Survey:
         return self.survey_repo.create(
-            user_id=user_id,
-            apartment_id=survey_data.apartment_id,
-            floors=survey_data.floors,
-            rooms_count=survey_data.rooms_count,
-            square_meters=survey_data.square_meters,
-            ceiling_height=survey_data.ceiling_height,
-            additional_info=survey_data.additional_info or {},
-            is_completed=False,
-            completion_percentage=0
-        )
+        user_id=user_id,
+        apartment_id=survey_data.apartment_id,
+
+        floors=survey_data.floors,
+        rooms_count=survey_data.rooms_count,
+        square_meters=survey_data.square_meters,
+        ceiling_height=survey_data.ceiling_height,
+
+        property_type=survey_data.property_type,
+        total_area=survey_data.total_area,
+        total_area_unit=survey_data.total_area_unit,
+        ceiling_height_unit=survey_data.ceiling_height_unit,
+        floors_count=survey_data.floors_count,
+        rooms_details=survey_data.rooms_details,
+        residents=survey_data.residents,
+        activities=survey_data.activities,
+        priorities=survey_data.priorities,
+        problem_areas=survey_data.problem_areas,
+        style_preferences=survey_data.style_preferences,
+        photos_paths=survey_data.photos_paths,
+        floor_plan_path=survey_data.floor_plan_path,
+
+        additional_info=survey_data.additional_info or {},
+
+        is_completed=False,
+        completion_percentage=0
+    )
     
     def update_survey(self, user_id: int, survey_id: int, survey_data: SurveyUpdate) -> Survey:
         survey = self.get_survey(user_id, survey_id)
+    
         update_data = survey_data.dict(exclude_unset=True)
+    
         return self.survey_repo.update(survey, **update_data)
     
     def update_survey_step(self, user_id: int, survey_id: int, step_data: SurveyStepUpdate) -> Survey:
