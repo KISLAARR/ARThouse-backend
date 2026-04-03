@@ -9,6 +9,7 @@ from app.core.database import get_db
 from app.core.security import get_current_user
 from app.schemas.task import TaskCreate, TaskUpdate, TaskResponse, TaskStatusUpdate
 from app.services.task_service import TaskService
+from app.models.task import Task
 
 router = APIRouter(prefix="/tasks", tags=["Задачи"])
 
@@ -22,17 +23,22 @@ async def get_tasks(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-
     user_id = current_user.get("id")
     service = TaskService(db)
 
-    if assigned_to_me:
-        return service.get_my_tasks(user_id)
+    query = db.query(Task)
 
     if apartment_id:
-        return service.get_tasks_by_apartment(user_id, apartment_id)
+        service._check_apartment_access(user_id, apartment_id)
+        query = query.filter(Task.apartment_id == apartment_id)
 
-    return service.get_my_tasks(user_id)
+    if assigned_to_me:
+        query = query.filter(Task.assigned_to == user_id)
+
+    if not apartment_id and not assigned_to_me:
+        query = query.filter(Task.assigned_to == user_id)
+
+    return query.offset(skip).limit(limit).all()
 
 
 @router.get("/my", response_model=List[TaskResponse])
@@ -40,7 +46,6 @@ async def get_my_tasks(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-
     user_id = current_user.get("id")
     service = TaskService(db)
     return service.get_my_tasks(user_id)
@@ -52,7 +57,6 @@ async def get_task(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-
     user_id = current_user.get("id")
     service = TaskService(db)
     return service.get_task(user_id, task_id)
@@ -64,7 +68,6 @@ async def create_task(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-
     user_id = current_user.get("id")
     service = TaskService(db)
     return service.create_task(user_id, task_data)
@@ -77,7 +80,6 @@ async def update_task(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-
     user_id = current_user.get("id")
     service = TaskService(db)
     return service.update_task(user_id, task_id, task_data)
@@ -90,7 +92,6 @@ async def update_task_status(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-
     user_id = current_user.get("id")
     service = TaskService(db)
     return service.update_task_status(user_id, task_id, status_data.status)
@@ -102,7 +103,6 @@ async def delete_task(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-
     user_id = current_user.get("id")
     service = TaskService(db)
     service.delete_task(user_id, task_id)
