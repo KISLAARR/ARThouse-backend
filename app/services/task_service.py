@@ -101,7 +101,7 @@ class TaskService:
     def update_task_status(self, user_id: int, task_id: int, status_value: str) -> Task:
         task = self.get_task(user_id, task_id)
         
-        updated = self.task_repo.update_status(task.id, status_value)
+        updated = self.task_repo.update_status(task_id, status_value)
         if not updated:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
