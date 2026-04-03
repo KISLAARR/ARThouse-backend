@@ -15,26 +15,23 @@ class Survey(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     apartment_id = Column(Integer, ForeignKey("apartments.id", ondelete="CASCADE"), nullable=True)
     
-    floors = Column(Integer, nullable=True)
-    rooms_count = Column(Integer, nullable=True)
-    square_meters = Column(Float, nullable=True)
-    ceiling_height = Column(Float, nullable=True)
-    
-    additional_info = Column(JSON, nullable=True)
-    
-    property_type = Column(String, nullable=True)
-
-    total_area = Column(Float, nullable=True)
-    total_area_unit = Column(String, nullable=True) 
-
-    ceiling_height_unit = Column(String, nullable=True)
+    floors = Column(Integer, nullable=True)  # deprecated
+    square_meters = Column(Float, nullable=True)  # deprecated 
 
     floors_count = Column(Integer, nullable=True)
+    rooms_count = Column(Integer, nullable=True)
 
+    total_area = Column(Float, nullable=True)
+    total_area_unit = Column(String, nullable=True)
+
+    ceiling_height = Column(Float, nullable=True)
+    ceiling_height_unit = Column(String, nullable=True)
+
+    property_type = Column(String, nullable=True)
+
+    additional_info = Column(JSON, nullable=True)
     rooms_details = Column(JSON, nullable=True)  
-
     residents = Column(JSON, nullable=True)
-
     activities = Column(JSON, nullable=True) 
     priorities = Column(JSON, nullable=True) 
     problem_areas = Column(JSON, nullable=True)  
