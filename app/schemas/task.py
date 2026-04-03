@@ -4,7 +4,7 @@ Pydantic схемы для задач (Task).
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
-
+from app.models.task import TaskPriority
 
 class TaskBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
@@ -15,24 +15,15 @@ class TaskBase(BaseModel):
         description="Статус задачи: pending, in_progress, completed"
     )
     
-    priority: Optional[int] = Field(
-        default=1,
-        ge=1,
-        le=5,
-        description="Приоритет задачи (1-5)"
+    priority: Optional[TaskPriority] = Field(
+        default=TaskPriority.MEDIUM,
+        description="low, medium, high, urgent"
     )
     
     due_date: Optional[datetime] = None
     
-    room_id: Optional[int] = Field(
-        None,
-        description="ID комнаты"
-    )
-    
-    assigned_to: Optional[int] = Field(
-        None,
-        description="ID пользователя или робота"
-    )
+    room_id: Optional[int] = Field(None, description="ID комнаты")
+    assigned_to: Optional[int] = Field(None, description="ID пользователя или робота")
 
 
 class TaskCreate(TaskBase):
