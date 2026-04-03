@@ -42,8 +42,3 @@ class RoomResponse(RoomBase):
 
     class Config:
         from_attributes = True
-    
-    # Индексы
-    __table_args__ = (
-        Index('idx_rooms_apartment', 'apartment_id'),
-    )
