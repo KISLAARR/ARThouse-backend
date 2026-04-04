@@ -1,4 +1,4 @@
-"""
+﻿"""
 Сервис для работы с задачами.
 """
 from typing import List, Optional
@@ -71,6 +71,41 @@ class TaskService:
     
     def get_my_tasks(self, user_id: int) -> List[Task]:
         return self.task_repo.get_by_user(user_id)
+    
+    def get_tasks_filtered(
+        self,
+        user_id: int,
+        apartment_id: Optional[int] = None,
+        assigned_to_me: bool = False,
+        skip: int = 0,
+        limit: int = 100
+    ) -> List[Task]:
+        """
+        Получение задач с фильтрацией.
+        - Если указан apartment_id — проверяем доступ и фильтруем по квартире
+        - Если assigned_to_me=True — фильтруем по назначенному пользователю
+        - Если ничего не указано — показываем задачи, назначенные текущему пользователю
+        """
+        # Базовый запрос через репозиторий (получаем все задачи пользователя или по квартире)
+        if apartment_id:
+            self._check_apartment_access(user_id, apartment_id)
+            query = self.task_repo.get_by_apartment(apartment_id)
+        else:
+            query = self.task_repo.get_by_user(user_id)
+        
+        # Преобразуем список в список для фильтрации (если нужно)
+        tasks = query
+        
+        # Дополнительная фильтрация по assigned_to_me
+        if assigned_to_me:
+            tasks = [t for t in tasks if t.assigned_to == user_id]
+        
+        # Если нет фильтров и нет apartment_id — оставляем только мои задачи
+        if not apartment_id and not assigned_to_me:
+            tasks = [t for t in tasks if t.assigned_to == user_id]
+        
+        # Пагинация
+        return tasks[skip:skip + limit]
     
     def create_task(self, user_id: int, task_data: TaskCreate) -> Task:
         self._check_apartment_access(user_id, task_data.apartment_id)
