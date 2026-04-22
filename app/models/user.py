@@ -16,6 +16,13 @@ class UserType(str, enum.Enum):
     SERVICE = "service"
 
 
+class UserRole(str, enum.Enum):
+    """Роли пользователей"""
+    CUSTOMER = "customer"
+    MASTER = "master"
+    ADMIN = "admin"
+
+
 class User(Base):
     """Модель пользователя"""
     __tablename__ = "users"
@@ -24,13 +31,16 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     username = Column(String, nullable=False)
     password_hash = Column(String, nullable=False)
+
     user_type = Column(Enum(UserType), default=UserType.B2C, nullable=False)
+    role = Column(Enum(UserRole), default=UserRole.CUSTOMER, nullable=False)
+
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
-    # Связи
     apartments = relationship("Apartment", back_populates="user", cascade="all, delete-orphan")
     surveys = relationship("Survey", back_populates="user", cascade="all, delete-orphan")
     created_tasks = relationship("Task", foreign_keys="Task.created_by", back_populates="creator")
