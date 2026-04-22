@@ -4,6 +4,7 @@ Pydantic схемы для пользователя.
 """
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
+from app.models.user import UserRole
 from datetime import datetime
 
 
