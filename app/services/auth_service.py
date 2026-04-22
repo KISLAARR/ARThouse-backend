@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.core.security import get_password_hash, verify_password, create_access_token
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import UserCreate, UserLogin
-from app.models.user import User
+from app.models.user import User, UserRole, UserType
 
 
 class AuthService:
@@ -42,6 +42,7 @@ class AuthService:
             username=user_data.username,
             password_hash=hashed_password,
             user_type="b2c",
+            role=user_data.role or UserRole.CUSTOMER,
             is_active=True,
             is_verified=False
         )
