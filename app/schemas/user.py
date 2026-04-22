@@ -18,6 +18,7 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     """Схема для регистрации нового пользователя"""
     password: str = Field(..., min_length=6)
+    role: Optional[UserRole] = UserRole.CUSTOMER
 
 
 class UserLogin(BaseModel):
@@ -29,12 +30,14 @@ class UserLogin(BaseModel):
 class UserUpdate(BaseModel):
     """Схема для обновления профиля"""
     username: Optional[str] = Field(None, min_length=2, max_length=50)
+    role: Optional[UserRole] = None
 
 
 # --- Схемы для ответов (Response) ---
 class UserResponse(UserBase):
     """Схема для ответа с данными пользователя"""
     id: int
+    role: UserRole
     is_active: bool
     created_at: datetime
     
