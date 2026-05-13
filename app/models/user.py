@@ -92,3 +92,20 @@ class User(Base):
         back_populates="master",
         cascade="all, delete-orphan"
     )
+
+    customer_chat_threads = relationship(
+        "DirectChatThread",
+        foreign_keys="DirectChatThread.customer_user_id",
+        back_populates="customer"
+    )
+    
+    master_chat_threads = relationship(
+        "DirectChatThread",
+        foreign_keys="DirectChatThread.master_user_id",
+        back_populates="master"
+    )
+    
+    sent_direct_messages = relationship(
+        "DirectChatMessage",
+        back_populates="sender"
+    )
