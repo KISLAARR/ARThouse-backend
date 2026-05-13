@@ -13,33 +13,23 @@ from app.api.v1.endpoints import (
 api_router = APIRouter()
 
 api_router.include_router(
-    auth.router,
-    prefix="/auth",
-    tags=["Auth"]
+    auth.router
 )
 
 api_router.include_router(
-    users.router,
-    prefix="/users",
-    tags=["Users"]
+    users.router
 )
 
 api_router.include_router(
-    apartments.router,
-    prefix="/apartments",
-    tags=["Apartments"]
+    apartments.router
 )
 
 api_router.include_router(
-    surveys.router,
-    prefix="/surveys",
-    tags=["Surveys"]
+    surveys.router
 )
 
 api_router.include_router(
-    snapshots.router,
-    prefix="/snapshots",
-    tags=["Snapshots"]
+    snapshots.router
 )
 
 api_router.include_router(
@@ -49,6 +39,5 @@ api_router.include_router(
 )
 
 api_router.include_router(
-    rooms.router,
-    tags=["Rooms"]
+    rooms.router
 )
