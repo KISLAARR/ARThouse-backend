@@ -29,10 +29,6 @@ api_router.include_router(
 )
 
 api_router.include_router(
-    snapshots.router
-)
-
-api_router.include_router(
     tasks.router
 )
 
