@@ -115,3 +115,15 @@ class User(Base):
     back_populates="user",
     cascade="all, delete-orphan"
     )
+
+    customer_contracts = relationship(
+        "Contract",
+        foreign_keys="Contract.customer_user_id",
+        back_populates="customer"
+    )
+    
+    master_contracts = relationship(
+        "Contract",
+        foreign_keys="Contract.master_user_id",
+        back_populates="master"
+    )
