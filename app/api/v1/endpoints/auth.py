@@ -8,7 +8,7 @@ from app.core.database import get_db
 from app.schemas.user import UserCreate, UserLogin, Token
 from app.services.auth_service import AuthService
 
-router = APIRouter(prefix="/auth", tags=["Аутентификация"])
+router = APIRouter()
 
 
 @router.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED)
