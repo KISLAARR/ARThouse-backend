@@ -80,3 +80,9 @@ class User(Base):
         foreign_keys="MasterReview.author_user_id",
         back_populates="author"
     )
+
+    marketplace_projects = relationship(
+        "MarketplaceProject",
+        back_populates="customer",
+        cascade="all, delete-orphan"
+    )
