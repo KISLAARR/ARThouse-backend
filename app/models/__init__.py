@@ -9,3 +9,4 @@ from app.models.master_profile import MasterProfile
 from app.models.master_portfolio_photo import MasterPortfolioPhoto
 from app.models.master_certificate import MasterCertificate
 from app.models.master_review import MasterReview
+from app.models.marketplace_project import MarketplaceProject
