@@ -8,14 +8,14 @@ from app.api.v1.api import api_router
 from app.core.config import settings
 from fastapi.staticfiles import StaticFiles
 
-app.mount("/media", StaticFiles(directory="media"), name="media")
-
 # Создание экземпляра приложения
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
+
+app.mount("/media", StaticFiles(directory="media"), name="media")
 
 # Настройка CORS
 app.add_middleware(
