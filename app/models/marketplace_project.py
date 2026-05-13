@@ -82,6 +82,12 @@ class MarketplaceProject(Base):
     back_populates="project"
     )
 
+    contracts = relationship(
+    "Contract",
+    back_populates="project",
+    cascade="all, delete-orphan"
+    )
+
     __table_args__ = (
         Index(
             "idx_marketplace_projects_status_created_at",
