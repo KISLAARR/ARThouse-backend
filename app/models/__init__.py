@@ -5,3 +5,4 @@ from app.models.room import Room
 from app.models.task import Task
 from app.models.household_member import HouseholdMember
 from app.models.apartment_snapshot import ApartmentSnapshot
+from app.models.master_profile import MasterProfile
