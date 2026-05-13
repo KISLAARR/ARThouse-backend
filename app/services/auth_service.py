@@ -53,6 +53,18 @@ class AuthService:
         self.db.add(db_user)
         self.db.commit()
         self.db.refresh(db_user)
+
+        if db_user.role == UserRole.MASTER:
+        master_profile = MasterProfile(
+        user_id=db_user.id,
+        rating=0.00,
+        reviews_count=0,
+        completed_jobs=0
+        )
+        
+        self.db.add(master_profile)
+        self.db.commit()
+        self.db.refresh(master_profile)
         
         # Создаём токен
         access_token = create_access_token(
