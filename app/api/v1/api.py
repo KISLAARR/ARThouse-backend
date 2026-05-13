@@ -33,9 +33,7 @@ api_router.include_router(
 )
 
 api_router.include_router(
-    tasks.router,
-    prefix="/tasks",
-    tags=["Tasks"]
+    tasks.router
 )
 
 api_router.include_router(
