@@ -71,6 +71,12 @@ class MarketplaceProject(Base):
         back_populates="marketplace_projects"
     )
 
+    bids = relationship(
+    "MasterBid",
+    back_populates="project",
+    cascade="all, delete-orphan"
+    )
+
     __table_args__ = (
         Index(
             "idx_marketplace_projects_status_created_at",
