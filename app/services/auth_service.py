@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.core.security import get_password_hash, verify_password, create_access_token
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import UserCreate, UserLogin
+from app.models.master_profile import MasterProfile
 from app.models.user import User, UserRole, UserType
 
 
