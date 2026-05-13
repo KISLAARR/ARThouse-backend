@@ -48,3 +48,10 @@ class User(Base):
     created_tasks = relationship("Task", foreign_keys="Task.created_by", back_populates="creator")
     assigned_tasks = relationship("Task", foreign_keys="Task.assigned_to", back_populates="assignee")
     household_memberships = relationship("HouseholdMember", back_populates="user")
+
+    master_profile = relationship(
+    "MasterProfile",
+    back_populates="user",
+    uselist=False,
+    cascade="all, delete-orphan"
+    )    
