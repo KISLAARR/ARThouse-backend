@@ -109,3 +109,9 @@ class User(Base):
         "DirectChatMessage",
         back_populates="sender"
     )
+
+    ai_foreman_threads = relationship(
+    "AIForemanThread",
+    back_populates="user",
+    cascade="all, delete-orphan"
+    )
