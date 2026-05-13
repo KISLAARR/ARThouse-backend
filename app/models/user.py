@@ -86,3 +86,9 @@ class User(Base):
         back_populates="customer",
         cascade="all, delete-orphan"
     )
+
+    master_bids = relationship(
+        "MasterBid",
+        back_populates="master",
+        cascade="all, delete-orphan"
+    )
