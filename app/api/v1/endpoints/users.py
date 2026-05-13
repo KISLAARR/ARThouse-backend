@@ -9,7 +9,7 @@ from app.core.security import get_current_user
 from app.schemas.user import UserResponse
 from app.services.user_service import UserService
 
-router = APIRouter(prefix="/users", tags=["Пользователи"])
+router = APIRouter()
 
 
 @router.get("/me", response_model=UserResponse)
