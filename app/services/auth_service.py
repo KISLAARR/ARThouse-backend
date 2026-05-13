@@ -40,6 +40,8 @@ class AuthService:
         db_user = User(
             email=user_data.email,
             username=user_data.username,
+            display_name=user_data.display_name,
+            phone=user_data.phone,
             password_hash=hashed_password,
             user_type="b2c",
             role=user_data.role or UserRole.CUSTOMER,
