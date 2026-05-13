@@ -61,3 +61,22 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan"
     )
+
+    master_certificates = relationship(
+        "MasterCertificate",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    
+    master_reviews = relationship(
+        "MasterReview",
+        foreign_keys="MasterReview.master_user_id",
+        back_populates="master",
+        cascade="all, delete-orphan"
+    )
+    
+    written_master_reviews = relationship(
+        "MasterReview",
+        foreign_keys="MasterReview.author_user_id",
+        back_populates="author"
+    )
