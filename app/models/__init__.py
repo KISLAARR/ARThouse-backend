@@ -7,3 +7,5 @@ from app.models.household_member import HouseholdMember
 from app.models.apartment_snapshot import ApartmentSnapshot
 from app.models.master_profile import MasterProfile
 from app.models.master_portfolio_photo import MasterPortfolioPhoto
+from app.models.master_certificate import MasterCertificate
+from app.models.master_review import MasterReview
