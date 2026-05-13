@@ -10,7 +10,7 @@ from app.core.security import get_current_user
 from app.schemas.apartment import ApartmentCreate, ApartmentUpdate, ApartmentResponse
 from app.services.apartment_service import ApartmentService
 
-router = APIRouter(prefix="/apartments", tags=["Квартиры"])
+router = APIRouter()
 
 
 @router.get("/my", response_model=List[ApartmentResponse])
