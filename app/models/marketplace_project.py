@@ -77,6 +77,11 @@ class MarketplaceProject(Base):
     cascade="all, delete-orphan"
     )
 
+    chat_threads = relationship(
+    "DirectChatThread",
+    back_populates="project"
+    )
+
     __table_args__ = (
         Index(
             "idx_marketplace_projects_status_created_at",
