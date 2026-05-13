@@ -30,6 +30,8 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
     username = Column(String, nullable=False)
+    display_name = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
     password_hash = Column(String, nullable=False)
 
     user_type = Column(Enum(UserType), default=UserType.B2C, nullable=False)
