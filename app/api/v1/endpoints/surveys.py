@@ -14,7 +14,7 @@ from app.schemas.survey import (
 from app.services.survey_service import SurveyService
 from app.models.user import User
 
-router = APIRouter(prefix="/surveys", tags=["Опросы"])
+router = APIRouter()
 
 
 @router.get("/dashboard", response_model=UserDashboardResponse)
