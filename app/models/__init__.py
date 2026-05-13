@@ -14,3 +14,4 @@ from app.models.master_bid import MasterBid
 from app.models.direct_chat import DirectChatThread, DirectChatMessage
 from app.models.ai_foreman import AIForemanThread, AIForemanMessage
 from app.models.catalog_item import CatalogItem
+from app.models.contract import Contract
