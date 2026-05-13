@@ -12,3 +12,4 @@ from app.models.master_review import MasterReview
 from app.models.marketplace_project import MarketplaceProject
 from app.models.master_bid import MasterBid
 from app.models.direct_chat import DirectChatThread, DirectChatMessage
+from app.models.ai_foreman import AIForemanThread, AIForemanMessage
