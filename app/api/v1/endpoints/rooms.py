@@ -10,7 +10,7 @@ from app.core.security import get_current_user
 from app.schemas.room import RoomCreate, RoomUpdate, RoomResponse
 from app.services.room_service import RoomService
 
-router = APIRouter(tags=["Комнаты"])
+router = APIRouter()
 
 
 @router.get("/apartments/{apartment_id}/rooms", response_model=List[RoomResponse])
