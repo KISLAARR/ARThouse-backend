@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from app.api.v1.endpoints import uploads
 from app.api.v1.endpoints import masters
 from app.api.v1.endpoints import marketplace_projects
+from app.api.v1.endpoints import master_bids
 
 from app.api.v1.endpoints import (
     auth,
@@ -52,4 +53,9 @@ api_router.include_router(
 api_router.include_router(
     marketplace_projects.router,
     tags=["Projects"]
+)
+
+api_router.include_router(
+    master_bids.router,
+    tags=["Bids"]
 )
