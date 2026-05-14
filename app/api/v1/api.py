@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from app.api.v1.endpoints import uploads
+from app.api.v1.endpoints import masters
 
 from app.api.v1.endpoints import (
     auth,
@@ -40,4 +41,9 @@ api_router.include_router(
 api_router.include_router(
     uploads.router,
     tags=["Uploads"]
+)
+
+api_router.include_router(
+    masters.router,
+    tags=["Masters"]
 )
