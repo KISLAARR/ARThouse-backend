@@ -4,6 +4,7 @@ from app.api.v1.endpoints import masters
 from app.api.v1.endpoints import marketplace_projects
 from app.api.v1.endpoints import master_bids
 from app.api.v1.endpoints import direct_chats
+from app.api.v1.endpoints import catalog
 
 from app.api.v1.endpoints import (
     auth,
@@ -64,4 +65,9 @@ api_router.include_router(
 api_router.include_router(
     direct_chats.router,
     tags=["Chats"]
+)
+
+api_router.include_router(
+    catalog.router,
+    tags=["Catalog"]
 )
