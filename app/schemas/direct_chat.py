@@ -1,5 +1,5 @@
 """
-Pydantic схемы для прямых чатов.
+Pydantic схемы для чатов.
 """
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any, List
