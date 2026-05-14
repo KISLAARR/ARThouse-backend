@@ -10,3 +10,9 @@ pydantic-settings==2.1.0
 python-dotenv==1.0.0
 email-validator==2.1.0
 Pillow==10.4.0
+alembic
+pytest
+pytest-asyncio
+httpx
+loguru
+slowapi
