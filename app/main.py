@@ -11,6 +11,11 @@ from sqlalchemy import text
 from app.core.database import SessionLocal
 from app.core.logging import setup_logging
 from app.core.middleware import RequestIDMiddleware
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from fastapi.responses import JSONResponse
 
 # Создание экземпляра приложения
 app = FastAPI(
@@ -21,6 +26,18 @@ app = FastAPI(
 
 setup_logging()
 app.add_middleware(RequestIDMiddleware)
+
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_middleware(SlowAPIMiddleware)
+
+
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_handler(request, exc):
+    return JSONResponse(
+        status_code=429,
+        content={"detail": "Слишком много запросов"}
+    )
 
 app.mount("/media", StaticFiles(directory="media"), name="media")
 
