@@ -1,5 +1,5 @@
 """
-Модели прямых чатов между заказчиком и мастером.
+Модели чатов между заказчиком и мастером.
 """
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, UniqueConstraint, Index
 from sqlalchemy.dialects.postgresql import JSONB
