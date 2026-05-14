@@ -9,6 +9,8 @@ from app.core.config import settings
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 from app.core.database import SessionLocal
+from app.core.logging import setup_logging
+from app.core.middleware import RequestIDMiddleware
 
 # Создание экземпляра приложения
 app = FastAPI(
@@ -16,6 +18,9 @@ app = FastAPI(
     version=settings.VERSION,
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
+
+setup_logging()
+app.add_middleware(RequestIDMiddleware)
 
 app.mount("/media", StaticFiles(directory="media"), name="media")
 
