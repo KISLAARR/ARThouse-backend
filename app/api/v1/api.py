@@ -5,6 +5,7 @@ from app.api.v1.endpoints import marketplace_projects
 from app.api.v1.endpoints import master_bids
 from app.api.v1.endpoints import direct_chats
 from app.api.v1.endpoints import catalog
+from app.api.v1.endpoints import ai_foreman
 
 from app.api.v1.endpoints import (
     auth,
@@ -70,4 +71,9 @@ api_router.include_router(
 api_router.include_router(
     catalog.router,
     tags=["Catalog"]
+)
+
+api_router.include_router(
+    ai_foreman.router,
+    tags=["AI Foreman"]
 )
