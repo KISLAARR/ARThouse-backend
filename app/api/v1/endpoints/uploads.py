@@ -2,24 +2,35 @@
 Эндпоинт загрузки файлов.
 """
 from io import BytesIO
-from typing import Literal
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status, Request
 from PIL import Image, UnidentifiedImageError
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.core.security import get_current_user
 from app.core.storage import get_storage_backend
 
 router = APIRouter()
 
-ALLOWED_KINDS = {"portfolio", "certificate", "chat_attachment", "project_photo"}
+limiter = Limiter(key_func=get_remote_address)
+
+ALLOWED_KINDS = {
+    "portfolio",
+    "certificate",
+    "chat_attachment",
+    "project_photo",
+    "avatar"
+}
 ALLOWED_MIME = {"image/jpeg", "image/png", "image/webp", "application/pdf"}
 IMAGE_MIME = {"image/jpeg", "image/png", "image/webp"}
 MAX_SIZE = 10 * 1024 * 1024
 
 
 @router.post("/uploads")
+@limiter.limit("20/minute")
 async def upload_file(
+    request: Request,
     kind: str = Form(...),
     file: UploadFile = File(...),
     current_user=Depends(get_current_user),
