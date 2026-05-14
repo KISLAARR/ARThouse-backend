@@ -1,8 +1,10 @@
 """
 Эндпоинты для аутентификации.
 """
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, Request
 from sqlalchemy.orm import Session
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.core.database import get_db
 from app.schemas.user import UserCreate, UserLogin, Token
@@ -10,51 +12,32 @@ from app.services.auth_service import AuthService
 
 router = APIRouter()
 
+limiter = Limiter(key_func=get_remote_address)
+
 
 @router.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED)
+@limiter.limit("3/minute")
 async def register(
+    request: Request,
     user_data: UserCreate,
     db: Session = Depends(get_db)
 ):
     """
     Регистрация нового пользователя.
-    
-    - **email**: должен быть уникальным
-    - **username**: должно быть уникальным
-    - **password**: минимум 6 символов
     """
-    try:
-        service = AuthService(db)
-        result = service.register(user_data)
-        return result
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Ошибка при регистрации: {str(e)}"
-        )
+    service = AuthService(db)
+    return service.register(user_data)
 
 
 @router.post("/login", response_model=Token)
+@limiter.limit("5/minute")
 async def login(
+    request: Request,
     login_data: UserLogin,
     db: Session = Depends(get_db)
 ):
     """
     Вход в систему.
-    
-    - **email**: email пользователя
-    - **password**: пароль
     """
-    try:
-        service = AuthService(db)
-        result = service.login(login_data)
-        return result
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Ошибка при входе: {str(e)}"
-        )
+    service = AuthService(db)
+    return service.login(login_data)
