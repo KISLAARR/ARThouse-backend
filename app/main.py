@@ -7,6 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.api import api_router
 from app.core.config import settings
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import text
+from app.core.database import SessionLocal
 
 # Создание экземпляра приложения
 app = FastAPI(
@@ -39,4 +41,18 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy"}
+    db = SessionLocal()
+    try:
+        db.execute(text("SELECT 1"))
+
+        return {
+            "status": "healthy",
+            "database": "ok"
+        }
+    except Exception:
+        return {
+            "status": "unhealthy",
+            "database": "error"
+        }
+    finally:
+        db.close()
