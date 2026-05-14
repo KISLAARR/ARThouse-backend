@@ -1,5 +1,5 @@
 """
-Репозиторий для прямых чатов.
+Репозиторий для чатов.
 """
 from typing import Optional, List
 from sqlalchemy.orm import Session
