@@ -35,3 +35,14 @@ class UserService:
         # Обновляем только переданные поля
         update_data = {k: v for k, v in user_data.items() if v is not None}
         return self.user_repo.update(user, **update_data)
+
+    def update_avatar(self, user_id: int, avatar_url: str):
+            """Обновить аватар пользователя"""
+            user = self.user_repo.get(user_id)
+            if not user:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Пользователь не найден"
+                )
+    
+            return self.user_repo.update(user, avatar_url=avatar_url)

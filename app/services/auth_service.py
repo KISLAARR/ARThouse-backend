@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.core.security import get_password_hash, verify_password, create_access_token
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import UserCreate, UserLogin
+from app.models.master_profile import MasterProfile
 from app.models.user import User, UserRole, UserType
 
 
@@ -40,6 +41,8 @@ class AuthService:
         db_user = User(
             email=user_data.email,
             username=user_data.username,
+            display_name=user_data.display_name,
+            phone=user_data.phone,
             password_hash=hashed_password,
             user_type="b2c",
             role=user_data.role or UserRole.CUSTOMER,
@@ -50,6 +53,18 @@ class AuthService:
         self.db.add(db_user)
         self.db.commit()
         self.db.refresh(db_user)
+
+        if db_user.role == UserRole.MASTER:
+        master_profile = MasterProfile(
+        user_id=db_user.id,
+        rating=0.00,
+        reviews_count=0,
+        completed_jobs=0
+        )
+        
+        self.db.add(master_profile)
+        self.db.commit()
+        self.db.refresh(master_profile)
         
         # Создаём токен
         access_token = create_access_token(

@@ -11,7 +11,7 @@ from app.schemas.task import TaskCreate, TaskUpdate, TaskResponse, TaskStatusUpd
 from app.services.task_service import TaskService
 from app.models.user import User
 
-router = APIRouter(prefix="/tasks", tags=["Задачи"])
+router = APIRouter()
 
 
 @router.get("/", response_model=List[TaskResponse])

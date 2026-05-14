@@ -13,6 +13,9 @@ class UserBase(BaseModel):
     """Общая схема пользователя"""
     email: EmailStr
     username: str = Field(..., min_length=2, max_length=50)
+    display_name: Optional[str] = Field(None, max_length=100)
+    phone: Optional[str] = Field(None, max_length=30)
+    avatar_url: Optional[str] = None
 
 
 # --- Схемы для запросов (Request) ---
@@ -32,7 +35,12 @@ class UserUpdate(BaseModel):
     """Схема для обновления профиля"""
     username: Optional[str] = Field(None, min_length=2, max_length=50)
     role: Optional[UserRole] = None
+    display_name: Optional[str] = Field(None, max_length=100)
+    phone: Optional[str] = Field(None, max_length=30)
+    avatar_url: Optional[str] = None
 
+class AvatarResponse(BaseModel):
+    avatar_url: str
 
 # --- Схемы для ответов (Response) ---
 class UserResponse(UserBase):

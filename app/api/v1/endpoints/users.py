@@ -9,7 +9,7 @@ from app.core.security import get_current_user
 from app.schemas.user import UserResponse
 from app.services.user_service import UserService
 
-router = APIRouter(prefix="/users", tags=["Пользователи"])
+router = APIRouter()
 
 
 @router.get("/me", response_model=UserResponse)
@@ -44,3 +44,26 @@ async def update_current_user(
     service = UserService(db)
     user = service.update_user(user_id, user_update)
     return user
+
+@router.post("/me/avatar", response_model=AvatarResponse)
+async def upload_avatar(
+    file: UploadFile = File(...),
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    content = await file.read()
+
+    storage = get_storage_backend()
+    result = storage.save(
+        user_id=current_user.id,
+        kind="avatar",
+        file_obj=BytesIO(content),
+        filename=file.filename or "avatar"
+    )
+
+    service = UserService(db)
+    service.update_avatar(current_user.id, result["url"])
+
+    return {
+        "avatar_url": result["url"]
+    }
