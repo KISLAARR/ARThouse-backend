@@ -1,11 +1,13 @@
 """
 Эндпоинты для работы с пользователями.
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
+from io import BytesIO
 
 from app.core.database import get_db
 from app.core.security import get_current_user
+from app.core.storage import get_storage_backend
 from app.schemas.user import UserResponse, UserUpdate, AvatarResponse
 from app.services.user_service import UserService
 
@@ -44,6 +46,7 @@ async def update_current_user(
     service = UserService(db)
     user = service.update_user(user_id, user_update)
     return user
+
 
 @router.post("/me/avatar", response_model=AvatarResponse)
 async def upload_avatar(
