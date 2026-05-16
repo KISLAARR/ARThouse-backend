@@ -1,9 +1,10 @@
 """
 Эндпоинты для работы с пользователями.
 """
+from io import BytesIO
+
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
-from io import BytesIO
 
 from app.core.database import get_db
 from app.core.security import get_current_user
@@ -16,19 +17,18 @@ router = APIRouter()
 
 @router.get("/me", response_model=UserResponse)
 async def get_current_user_info(
-    current_user: dict = Depends(get_current_user),
-    db: Session = Depends(get_db)
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
     """
     Получить информацию о текущем пользователе.
     """
-    user_id = current_user.get("id")
     service = UserService(db)
-    user = service.get_user_by_id(user_id)
+    user = service.get_user_by_id(current_user.id)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Пользователь не найден"
+            detail="Пользователь не найден",
         )
     return user
 
@@ -36,15 +36,14 @@ async def get_current_user_info(
 @router.put("/me", response_model=UserResponse)
 async def update_current_user(
     user_update: dict,
-    current_user: dict = Depends(get_current_user),
-    db: Session = Depends(get_db)
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
     """
     Обновить информацию о текущем пользователе.
     """
-    user_id = current_user.get("id")
     service = UserService(db)
-    user = service.update_user(user_id, user_update)
+    user = service.update_user(current_user.id, user_update)
     return user
 
 
@@ -52,7 +51,7 @@ async def update_current_user(
 async def upload_avatar(
     file: UploadFile = File(...),
     current_user=Depends(get_current_user),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     content = await file.read()
 
@@ -61,12 +60,12 @@ async def upload_avatar(
         user_id=current_user.id,
         kind="avatar",
         file_obj=BytesIO(content),
-        filename=file.filename or "avatar"
+        filename=file.filename or "avatar",
     )
 
     service = UserService(db)
     service.update_avatar(current_user.id, result["url"])
 
     return {
-        "avatar_url": result["url"]
+        "avatar_url": result["url"],
     }

@@ -16,10 +16,10 @@ router = APIRouter()
 @router.get("/apartments/{apartment_id}/rooms", response_model=List[RoomResponse])
 async def get_rooms(
     apartment_id: int,
-    current_user: dict = Depends(get_current_user),
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    user_id = current_user.get("id")
+    user_id = current_user.id
     service = RoomService(db)
     return service.get_rooms(user_id, apartment_id)
 
@@ -32,10 +32,10 @@ async def get_rooms(
 async def create_room(
     apartment_id: int,
     room_data: RoomCreate,
-    current_user: dict = Depends(get_current_user),
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    user_id = current_user.get("id")
+    user_id = current_user.id
     service = RoomService(db)
 
     room_data.apartment_id = apartment_id
@@ -46,10 +46,10 @@ async def create_room(
 @router.get("/rooms/{room_id}", response_model=RoomResponse)
 async def get_room(
     room_id: int,
-    current_user: dict = Depends(get_current_user),
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    user_id = current_user.get("id")
+    user_id = current_user.id
     service = RoomService(db)
     return service.get_room(user_id, room_id)
 
@@ -58,10 +58,10 @@ async def get_room(
 async def update_room(
     room_id: int,
     room_data: RoomUpdate,
-    current_user: dict = Depends(get_current_user),
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    user_id = current_user.get("id")
+    user_id = current_user.id
     service = RoomService(db)
     return service.update_room(user_id, room_id, room_data)
 
@@ -69,10 +69,10 @@ async def update_room(
 @router.delete("/rooms/{room_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_room(
     room_id: int,
-    current_user: dict = Depends(get_current_user),
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    user_id = current_user.get("id")
+    user_id = current_user.id
     service = RoomService(db)
 
     service.delete_room(user_id, room_id)

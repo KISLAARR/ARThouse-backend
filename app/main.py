@@ -1,6 +1,8 @@
 """
 Главный модуль приложения.
 """
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -39,7 +41,9 @@ async def rate_limit_handler(request, exc):
         content={"detail": "Слишком много запросов"}
     )
 
-app.mount("/media", StaticFiles(directory="media"), name="media")
+media_dir = Path("media")
+media_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/media", StaticFiles(directory=str(media_dir)), name="media")
 
 # Настройка CORS
 app.add_middleware(
