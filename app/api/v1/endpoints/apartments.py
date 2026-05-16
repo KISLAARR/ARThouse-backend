@@ -15,13 +15,13 @@ router = APIRouter()
 
 @router.get("/my", response_model=List[ApartmentResponse])
 async def get_my_apartments(
-    current_user: dict = Depends(get_current_user),
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     Получить все квартиры текущего пользователя.
     """
-    user_id = current_user.get("id")
+    user_id = current_user.id
     service = ApartmentService(db)
     return service.get_user_apartments(user_id)
 
@@ -29,13 +29,13 @@ async def get_my_apartments(
 @router.post("/my", response_model=ApartmentResponse, status_code=status.HTTP_201_CREATED)
 async def create_apartment(
     apartment_data: ApartmentCreate,
-    current_user: dict = Depends(get_current_user),
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     Создать новую квартиру для текущего пользователя.
     """
-    user_id = current_user.get("id")
+    user_id = current_user.id
     service = ApartmentService(db)
     return service.create_apartment(user_id, apartment_data)
 
@@ -43,13 +43,13 @@ async def create_apartment(
 @router.get("/my/{apartment_id}", response_model=ApartmentResponse)
 async def get_apartment(
     apartment_id: int,
-    current_user: dict = Depends(get_current_user),
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     Получить конкретную квартиру по ID.
     """
-    user_id = current_user.get("id")
+    user_id = current_user.id
     service = ApartmentService(db)
     apartment = service.get_apartment(user_id, apartment_id)
     if not apartment:
@@ -64,13 +64,13 @@ async def get_apartment(
 async def update_apartment(
     apartment_id: int,
     apartment_data: ApartmentUpdate,
-    current_user: dict = Depends(get_current_user),
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     Обновить квартиру.
     """
-    user_id = current_user.get("id")
+    user_id = current_user.id
     service = ApartmentService(db)
     apartment = service.update_apartment(user_id, apartment_id, apartment_data)
     if not apartment:
@@ -84,13 +84,13 @@ async def update_apartment(
 @router.delete("/my/{apartment_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_apartment(
     apartment_id: int,
-    current_user: dict = Depends(get_current_user),
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     Удалить квартиру.
     """
-    user_id = current_user.get("id")
+    user_id = current_user.id
     service = ApartmentService(db)
     success = service.delete_apartment(user_id, apartment_id)
     if not success:

@@ -16,13 +16,13 @@ router = APIRouter()
 
 @router.get("/me", response_model=UserResponse)
 async def get_current_user_info(
-    current_user: dict = Depends(get_current_user),
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     Получить информацию о текущем пользователе.
     """
-    user_id = current_user.get("id")
+    user_id = current_user.id
     service = UserService(db)
     user = service.get_user_by_id(user_id)
     if not user:
@@ -36,13 +36,13 @@ async def get_current_user_info(
 @router.put("/me", response_model=UserResponse)
 async def update_current_user(
     user_update: dict,
-    current_user: dict = Depends(get_current_user),
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     Обновить информацию о текущем пользователе.
     """
-    user_id = current_user.get("id")
+    user_id = current_user.id
     service = UserService(db)
     user = service.update_user(user_id, user_update)
     return user
