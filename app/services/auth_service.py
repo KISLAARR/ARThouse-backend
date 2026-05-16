@@ -8,7 +8,7 @@ from app.core.security import get_password_hash, verify_password, create_access_
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import UserCreate, UserLogin
 from app.models.master_profile import MasterProfile
-from app.models.user import User, UserRole
+from app.models.user import User, UserRole, UserType
 
 
 class AuthService:
@@ -44,7 +44,7 @@ class AuthService:
             display_name=user_data.display_name,
             phone=user_data.phone,
             password_hash=hashed_password,
-            user_type="b2c",
+            user_type=UserType.B2C,
             role=user_data.role or UserRole.CUSTOMER,
             is_active=True,
             is_verified=False
