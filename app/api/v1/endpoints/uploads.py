@@ -5,15 +5,11 @@ from io import BytesIO
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status, Request
 from PIL import Image, UnidentifiedImageError
-from slowapi import Limiter
-from slowapi.util import get_remote_address
-
 from app.core.security import get_current_user
+from app.core.limiter import limiter
 from app.core.storage import get_storage_backend
 
 router = APIRouter()
-
-limiter = Limiter(key_func=get_remote_address)
 
 ALLOWED_KINDS = {
     "portfolio",
