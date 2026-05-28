@@ -189,3 +189,67 @@ class SnapshotService:
             }
             for s in snapshots[:limit]
         ]
+
+    def get_project_map(
+        self,
+        project_id: int
+    ) -> Dict[str, Any]:
+
+        snapshot = self.snapshot_repo.get_latest_by_project(project_id)
+
+        if not snapshot:
+            return {
+                "version": 1,
+                "rooms": [],
+                "walls": [],
+                "objects": []
+            }
+
+        return {
+            "project_id": project_id,
+            "version": snapshot.version,
+            "editor_role": snapshot.editor_role,
+            "snapshot_json": snapshot.snapshot_json,
+            "created_at": snapshot.created_at
+        }
+
+    def save_project_map(
+        self,
+        project_id: int,
+        user_id: int,
+        editor_role: str,
+        snapshot_json: Dict[str, Any]
+    ) -> Dict[str, Any]:
+
+        # Минимальная валидация
+        has_valid_key = any([
+            isinstance(snapshot_json.get("rooms"), list),
+            isinstance(snapshot_json.get("walls"), list),
+            isinstance(snapshot_json.get("objects"), list)
+        ])
+
+        if not has_valid_key:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="JSON должен содержать rooms/walls/objects массив"
+            )
+
+        latest = self.snapshot_repo.get_latest_by_project(project_id)
+
+        new_version = 1
+        if latest:
+            new_version = latest.version + 1
+
+        snapshot = self.snapshot_repo.create_project_snapshot(
+            project_id=project_id,
+            user_id=user_id,
+            editor_role=editor_role,
+            snapshot_json=snapshot_json,
+            version=new_version
+        )
+
+        return {
+            "project_id": project_id,
+            "version": snapshot.version,
+            "snapshot_json": snapshot.snapshot_json
+        }

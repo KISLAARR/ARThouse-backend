@@ -88,6 +88,12 @@ class MarketplaceProject(Base):
     cascade="all, delete-orphan"
     )
 
+    snapshots = relationship(
+    "ApartmentSnapshot",
+    back_populates="project",
+    cascade="all, delete-orphan"
+    )
+
     __table_args__ = (
         Index(
             "idx_marketplace_projects_status_created_at",

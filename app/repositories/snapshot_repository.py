@@ -96,3 +96,42 @@ class SnapshotRepository(BaseRepository[ApartmentSnapshot]):
         self.db.commit()
         self.db.refresh(snapshot)
         return snapshot
+
+    def get_latest_by_project(
+        self,
+        project_id: int
+    ) -> Optional[ApartmentSnapshot]:
+        return self.db.query(ApartmentSnapshot).filter(
+            ApartmentSnapshot.project_id == project_id
+        ).order_by(desc(ApartmentSnapshot.version)).first()
+
+    def get_project_versions(
+        self,
+        project_id: int
+    ) -> List[ApartmentSnapshot]:
+        return self.db.query(ApartmentSnapshot).filter(
+            ApartmentSnapshot.project_id == project_id
+        ).order_by(desc(ApartmentSnapshot.version)).all()
+
+    def create_project_snapshot(
+        self,
+        project_id: int,
+        user_id: int,
+        editor_role: str,
+        snapshot_json: Dict[str, Any],
+        version: int
+    ) -> ApartmentSnapshot:
+
+        snapshot = ApartmentSnapshot(
+            project_id=project_id,
+            saved_by_user_id=user_id,
+            editor_role=editor_role,
+            snapshot_json=snapshot_json,
+            version=version
+        )
+
+        self.db.add(snapshot)
+        self.db.commit()
+        self.db.refresh(snapshot)
+
+        return snapshot
