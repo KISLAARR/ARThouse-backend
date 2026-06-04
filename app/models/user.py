@@ -128,3 +128,10 @@ class User(Base):
         foreign_keys="Contract.master_user_id",
         back_populates="master"
     )
+
+    user_map = relationship(
+    "UserMap",
+    back_populates="user",
+    uselist=False,
+    cascade="all, delete-orphan"
+    )

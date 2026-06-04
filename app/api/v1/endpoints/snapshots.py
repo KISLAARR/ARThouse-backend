@@ -28,15 +28,14 @@ async def get_project_map(
 async def save_project_map(
     project_id: int,
     snapshot_json: Dict[str, Any],
+    current_user = Depends(get_current_user),
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
 ):
-
     service = SnapshotService(db)
 
     return service.save_project_map(
         project_id=project_id,
         user_id=current_user.id,
-        editor_role="customer",
+        editor_role=current_user.role,
         snapshot_json=snapshot_json
     )

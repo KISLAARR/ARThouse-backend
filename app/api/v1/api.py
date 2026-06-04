@@ -7,6 +7,7 @@ from app.api.v1.endpoints import direct_chats
 from app.api.v1.endpoints import catalog
 from app.api.v1.endpoints import ai_foreman
 from app.api.v1.endpoints import snapshots
+from app.api.v1.endpoints import maps
 
 from app.api.v1.endpoints import (
     auth,
@@ -81,4 +82,8 @@ api_router.include_router(
 
 api_router.include_router(
     snapshots.router
+)
+
+api_router.include_router(
+    maps.router
 )
