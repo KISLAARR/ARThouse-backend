@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     Загружает переменные из .env файла.
     """
     # Проект
-    PROJECT_NAME: str = "ARThouse API"
+    PROJECT_NAME: str = "Приделе API"
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
     API_V1_PREFIX: str = "/api/v1"  # Добавлено для совместимости с security.py

@@ -58,7 +58,7 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 @app.get("/")
 async def root():
     return {
-        "message": "ARThouse API",
+        "message": "Приделе API",
         "version": settings.VERSION,
         "docs": "/docs"
     }

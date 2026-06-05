@@ -273,7 +273,7 @@ arthouse-backend/
 
 ---
 
-# 🏠 ARThouse Backend - Инструкция по запуску
+# 🏠 Приделе Backend - Инструкция по запуску
 
 ## 📋 Содержание
 1. [Требования](#требования)
@@ -399,7 +399,7 @@ CREATE DATABASE arthouse_db;
 
 ```env
 # Настройки приложения
-APP_NAME=ARThouse API
+APP_NAME=Приделе API
 APP_VERSION=0.1.0
 DEBUG=True
 
@@ -917,7 +917,7 @@ arthouse-backend/
 
 ---
 
-# 🏠 ARThouse Backend - Инструкция по запуску
+# 🏠 Приделе Backend - Инструкция по запуску
 
 ## 📋 Содержание
 1. [Требования](#требования)
@@ -1043,7 +1043,7 @@ CREATE DATABASE arthouse_db;
 
 ```env
 # Настройки приложения
-APP_NAME=ARThouse API
+APP_NAME=Приделе API
 APP_VERSION=0.1.0
 DEBUG=True
 
