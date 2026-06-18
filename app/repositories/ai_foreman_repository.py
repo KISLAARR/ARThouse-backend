@@ -38,6 +38,17 @@ class AIForemanRepository:
 
         return thread
 
+    def set_context(self, thread: AIForemanThread, context: dict) -> AIForemanThread:
+        """Сохраняет состояние диалога (object_card + stage + history) в тред."""
+        thread.context_json = context
+        # SQLAlchemy не всегда замечает мутацию JSONB по ссылке — помечаем явно.
+        from sqlalchemy.orm.attributes import flag_modified
+        flag_modified(thread, "context_json")
+        self.db.add(thread)
+        self.db.commit()
+        self.db.refresh(thread)
+        return thread
+
     def get_messages(self, thread_id: int) -> List[AIForemanMessage]:
         return self.db.query(AIForemanMessage).filter(
             AIForemanMessage.thread_id == thread_id

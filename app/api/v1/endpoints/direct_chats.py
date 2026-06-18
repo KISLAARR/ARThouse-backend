@@ -21,6 +21,15 @@ from app.services.direct_chat_service import DirectChatService
 router = APIRouter()
 
 
+@router.get("/chats/my", response_model=List[DirectChatThreadResponse])
+async def get_my_chats(
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    service = DirectChatService(db)
+    return service.get_my_threads(current_user.id)
+
+
 @router.get("/chats", response_model=List[DirectChatThreadResponse])
 async def get_chats(
     current_user=Depends(get_current_user),

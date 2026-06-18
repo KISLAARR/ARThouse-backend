@@ -12,6 +12,9 @@ from app.core.database import Base
 
 class MasterBidStatus(str, enum.Enum):
     SENT = "sent"
+    # SELECTED — отклик, который заказчик выбрал в сделке (POST select-master).
+    # Фронт ждёт ровно строку "selected" (см. marketplace-backend-spec.md).
+    SELECTED = "selected"
     ACCEPTED = "accepted"
     DECLINED = "declined"
     WITHDRAWN = "withdrawn"

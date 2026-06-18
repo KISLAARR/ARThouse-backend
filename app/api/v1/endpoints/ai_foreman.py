@@ -14,11 +14,30 @@ from app.schemas.ai_foreman import (
     AIForemanThreadResponse,
     AIForemanMessageCreate,
     AIForemanMessageResponse,
-    AIForemanSendMessageResponse
+    AIForemanSendMessageResponse,
+    AIForemanChatRequest,
+    AIForemanChatResponse,
 )
 from app.services.ai_foreman_service import AIForemanService
 
 router = APIRouter()
+
+
+@router.post("/ai-foreman/chat", response_model=AIForemanChatResponse)
+def ai_foreman_chat(
+    payload: AIForemanChatRequest,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Один ход диалога с ИИ-прорабом.
+
+    Создаёт тред при отсутствии thread_id. Возвращает текст ответа, эмоцию
+    аватара, этап (Шаг 0…5), обновлённый object_card, признак готовности
+    сметы и данные для редактора карты. Синхронная ручка — выполняется в
+    threadpool, т.к. внутри несколько обращений к LLM.
+    """
+    service = AIForemanService(db)
+    return service.chat(user_id=current_user.id, req=payload)
 
 
 @router.get(
@@ -73,7 +92,7 @@ async def get_ai_foreman_messages(
     response_model=AIForemanSendMessageResponse,
     status_code=status.HTTP_201_CREATED
 )
-async def send_ai_foreman_message(
+def send_ai_foreman_message(
     thread_id: int,
     message_data: AIForemanMessageCreate,
     current_user=Depends(get_current_user),

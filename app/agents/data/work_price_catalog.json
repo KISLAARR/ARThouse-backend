@@ -1,0 +1,25 @@
+[
+  { "id": "demo_floor",      "section_code": "01", "section_title": "Подготовительные работы", "work": "Демонтаж старого напольного покрытия", "unit": "м²",  "price_per_unit": 250 },
+  { "id": "demo_walls",      "section_code": "01", "section_title": "Подготовительные работы", "work": "Демонтаж старых обоев / покрытий стен",  "unit": "м²",  "price_per_unit": 180 },
+  { "id": "demo_trash",      "section_code": "01", "section_title": "Подготовительные работы", "work": "Вынос и вывоз строительного мусора",      "unit": "м³",  "price_per_unit": 1500 },
+
+  { "id": "wall_align",      "section_code": "02", "section_title": "Стены",                   "work": "Выравнивание стен штукатуркой",          "unit": "м²",  "price_per_unit": 650 },
+  { "id": "wall_putty",      "section_code": "02", "section_title": "Стены",                   "work": "Шпаклёвка стен под покраску",            "unit": "м²",  "price_per_unit": 400 },
+  { "id": "wall_paint",      "section_code": "02", "section_title": "Стены",                   "work": "Покраска стен (2 слоя)",                 "unit": "м²",  "price_per_unit": 350 },
+  { "id": "wall_wallpaper",  "section_code": "02", "section_title": "Стены",                   "work": "Поклейка обоев",                         "unit": "м²",  "price_per_unit": 450 },
+  { "id": "wall_tile",       "section_code": "02", "section_title": "Стены",                   "work": "Укладка плитки на стену",                "unit": "м²",  "price_per_unit": 1400 },
+
+  { "id": "ceil_putty",      "section_code": "03", "section_title": "Потолок",                 "work": "Шпаклёвка потолка под покраску",         "unit": "м²",  "price_per_unit": 500 },
+  { "id": "ceil_paint",      "section_code": "03", "section_title": "Потолок",                 "work": "Покраска потолка",                       "unit": "м²",  "price_per_unit": 400 },
+  { "id": "ceil_stretch",    "section_code": "03", "section_title": "Потолок",                 "work": "Монтаж натяжного потолка",               "unit": "м²",  "price_per_unit": 900 },
+
+  { "id": "floor_screed",    "section_code": "04", "section_title": "Пол",                     "work": "Стяжка пола",                            "unit": "м²",  "price_per_unit": 700 },
+  { "id": "floor_laminate",  "section_code": "04", "section_title": "Пол",                     "work": "Укладка ламината",                       "unit": "м²",  "price_per_unit": 500 },
+  { "id": "floor_tile",      "section_code": "04", "section_title": "Пол",                     "work": "Укладка напольной плитки",               "unit": "м²",  "price_per_unit": 1300 },
+
+  { "id": "elec_wiring",     "section_code": "05", "section_title": "Электрика",               "work": "Замена проводки (точка)",                "unit": "точка","price_per_unit": 1200 },
+  { "id": "elec_socket",     "section_code": "05", "section_title": "Электрика",               "work": "Установка розетки / выключателя",         "unit": "шт",  "price_per_unit": 350 },
+
+  { "id": "plumb_pipes",     "section_code": "06", "section_title": "Сантехника",              "work": "Замена труб водоснабжения (точка)",      "unit": "точка","price_per_unit": 2500 },
+  { "id": "plumb_install",   "section_code": "06", "section_title": "Сантехника",              "work": "Установка сантехприбора",                "unit": "шт",  "price_per_unit": 3000 }
+]

@@ -12,7 +12,9 @@ from app.models.marketplace_project import MarketplaceProjectStatus
 from app.schemas.marketplace_project import (
     MarketplaceProjectCreate,
     MarketplaceProjectUpdate,
-    MarketplaceProjectResponse
+    MarketplaceProjectResponse,
+    MarketplaceProjectPublishRequest,
+    OrderFeedItemResponse
 )
 from app.services.marketplace_project_service import MarketplaceProjectService
 
@@ -74,6 +76,7 @@ async def update_project(
 @router.post("/projects/{project_id}/publish", response_model=MarketplaceProjectResponse)
 async def publish_project(
     project_id: int,
+    payload: Optional[MarketplaceProjectPublishRequest] = None,
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -81,7 +84,9 @@ async def publish_project(
 
     return service.publish_project(
         user_id=current_user.id,
-        project_id=project_id
+        project_id=project_id,
+        district=payload.district if payload else None,
+        address=payload.address if payload else None
     )
 
 
@@ -145,6 +150,36 @@ async def get_projects_feed(
         limit=limit,
         offset=offset
     )
+
+
+@router.get("/orders", response_model=List[OrderFeedItemResponse])
+async def get_orders(
+    work_type: Optional[str] = Query(None),
+    district: Optional[str] = Query(None),
+    limit: int = Query(50, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Лента опубликованных заказов для мастера (с фильтрами)."""
+    service = MarketplaceProjectService(db)
+
+    return service.get_feed(
+        work_type=work_type,
+        district=district,
+        limit=limit,
+        offset=offset
+    )
+
+
+@router.get("/orders/districts", response_model=List[str])
+async def get_orders_districts(
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Динамический список районов из реальной ленты (для фильтров)."""
+    service = MarketplaceProjectService(db)
+    return service.list_feed_districts()
 
 
 @router.get("/projects/{project_id}", response_model=MarketplaceProjectResponse)

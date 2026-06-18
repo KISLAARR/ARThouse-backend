@@ -100,7 +100,12 @@ class DirectChatRepository:
 
         thread = self.get_thread(thread_id)
         if thread:
-            thread.last_message_preview = body[:280]
+            if body:
+                thread.last_message_preview = body[:280]
+            elif attachments_json:
+                thread.last_message_preview = "📷 Фото"
+            else:
+                thread.last_message_preview = ""
 
         self.db.commit()
         self.db.refresh(message)

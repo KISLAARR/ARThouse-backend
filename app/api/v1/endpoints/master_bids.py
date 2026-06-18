@@ -9,7 +9,12 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import get_current_user
 
-from app.schemas.master_bid import MasterBidCreate, MasterBidResponse
+from app.schemas.master_bid import (
+    MasterBidCreate,
+    MasterBidResponse,
+    SelectMasterRequest
+)
+from app.schemas.direct_chat import DirectChatThreadResponse
 from app.services.master_bid_service import MasterBidService
 
 router = APIRouter()
@@ -61,6 +66,26 @@ async def get_my_bids(
 
     return service.get_my_bids(
         master_user_id=current_user.id
+    )
+
+
+@router.post(
+    "/projects/{project_id}/select-master",
+    response_model=DirectChatThreadResponse
+)
+async def select_master(
+    project_id: int,
+    payload: SelectMasterRequest,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """⭐ Заказчик выбирает мастера. Возвращает чат с выбранным мастером."""
+    service = MasterBidService(db)
+
+    return service.select_master(
+        customer_user_id=current_user.id,
+        project_id=project_id,
+        bid_id=payload.bid_id
     )
 
 

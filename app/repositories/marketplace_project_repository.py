@@ -69,3 +69,19 @@ class MarketplaceProjectRepository(BaseRepository[MarketplaceProject]):
             .limit(limit)
             .all()
         )
+
+    def list_feed_districts(self) -> List[str]:
+        """Районы, реально присутствующие в ленте (для динамических фильтров)."""
+        rows = (
+            self.db.query(MarketplaceProject.district)
+            .filter(
+                MarketplaceProject.status == MarketplaceProjectStatus.PUBLISHED,
+                MarketplaceProject.district.isnot(None),
+                MarketplaceProject.district != "",
+            )
+            .distinct()
+            .order_by(MarketplaceProject.district)
+            .all()
+        )
+
+        return [district for (district,) in rows]

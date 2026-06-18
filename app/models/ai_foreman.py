@@ -4,6 +4,7 @@
 import enum
 
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, Enum, Index
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
@@ -22,6 +23,10 @@ class AIForemanThread(Base):
 
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     title = Column(String, nullable=True)
+
+    # Состояние диалога ИИ-прораба: {object_card, stage, history}.
+    # Единый артефакт object_card отсюда идёт в карту, на биржу и в ТЗ мастеру.
+    context_json = Column(JSONB, nullable=True)
 
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
