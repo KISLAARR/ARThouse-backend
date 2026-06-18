@@ -8,6 +8,7 @@
 import os
 import json
 import time
+from collections import deque
 from contextlib import contextmanager
 
 import httpx
@@ -17,6 +18,12 @@ log = logger.bind(component="ai-foreman")
 
 # --- метрики в памяти (в проде заменяются на Prometheus/StatsD) ---
 METRICS = {"stages": {}}
+
+# Слой 2 (guardrails): счётчики по категориям + окно injection-попыток.
+GUARDRAILS = {}                      # category -> count
+_INJECTION_TS = deque(maxlen=100)    # метки времени injection-попыток (всплеск)
+INJECTION_WINDOW_S = 300
+INJECTION_SPIKE = 3                  # >= за окно → алерт P2
 
 
 def _bucket(name):
@@ -44,6 +51,41 @@ def get_metrics():
             "avg_ms": round(avg, 1),
             "max_ms": round(b["max_ms"], 1),
         }
+    return out
+
+
+# =========================
+# GUARDRAILS (Слой 2): метрики и алерты
+# =========================
+
+def record_guardrail(category):
+    """Считаем срабатывание триажа по категории (для Data Quality)."""
+    GUARDRAILS[category] = GUARDRAILS.get(category, 0) + 1
+
+
+def note_injection(sample=""):
+    """Фиксируем попытку injection; на всплеск — алерт P2 (сигнал безопасности)."""
+    now = time.time()
+    _INJECTION_TS.append(now)
+    recent = [t for t in _INJECTION_TS if now - t <= INJECTION_WINDOW_S]
+    if len(recent) >= INJECTION_SPIKE:
+        alert(
+            f"P2: всплеск injection-попыток ({len(recent)} за {INJECTION_WINDOW_S // 60} мин)",
+            severity="P2",
+            sample=(sample or "")[:120],
+        )
+
+
+def guardrail_metrics():
+    """Снимок метрик Слоя 2: block_rate, off_topic_rate, injection_attempts, unsafe."""
+    total = sum(GUARDRAILS.values())
+    out = {"total": total, "by_category": dict(GUARDRAILS)}
+    if total:
+        valid = GUARDRAILS.get("valid", 0)
+        out["guardrail_block_rate"] = round((total - valid) / total, 3)
+        out["off_topic_rate"] = round(GUARDRAILS.get("off_topic", 0) / total, 3)
+        out["unsafe_rate"] = round(GUARDRAILS.get("unsafe", 0) / total, 3)
+    out["injection_attempts"] = GUARDRAILS.get("injection", 0)
     return out
 
 

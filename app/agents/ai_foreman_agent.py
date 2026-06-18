@@ -15,8 +15,9 @@ import json
 import re
 
 from . import llm_client
+from . import guardrails
+from . import knowledge
 from .estimate import build_estimate, catalog_for_prompt
-from .knowledge import knowledge_context
 from .monitoring import stage as monitor_stage, alert
 
 HISTORY_LIMIT = 20
@@ -311,10 +312,16 @@ def room_hints(state):
 
 def stage_reply(state):
     instruction = STAGE_INSTRUCTIONS.get(state["stage"], STAGE_INSTRUCTIONS["discovery"])
+
+    # Слой 4 (RAG): достаём релевантные куски базы знаний — экспертность.
+    # Источники пользователю НЕ показываем: это живой диалог со специалистом,
+    # а не справка со ссылками. RAG только питает ответ (см. render_context).
     query = (last_user_text(state) + " " + " ".join(room_hints(state))).strip()
-    expert = knowledge_context(query, stage=state["stage"], rooms=room_hints(state))
+    hits = knowledge.retrieve(query, stage=state["stage"], rooms=room_hints(state))
+    expert = knowledge.render_context(hits)
     if expert:
         instruction += "\n\n" + expert
+
     instruction += f"\n\nТЕКУЩАЯ КАРТОЧКА:\n{json.dumps(state['object_card'], ensure_ascii=False)}"
     return run_llm(state, instruction)
 
@@ -435,11 +442,31 @@ def chat(user_message, state, image=None, catalog=None, index=None, approved=Fal
     approved — явная кнопка «согласовать» с фронта (приравнивается к intent approval).
     """
     with monitor_stage("chat_turn", stage_name=state.get("stage"), has_image=bool(image)):
+        # ЛОЙ 2: входной триаж guardrails — ДО дорогого вызова агента.
+        decision = guardrails.screen(user_message, state)
+        if decision.blocked:
+            # короткий шаблонный ответ; object_card и этап не трогаем.
+            # Для injection/pii в историю кладём санитайз-маркер, фото игнорируем.
+            add_user_message(state, decision.stored_user_text or user_message, image=None)
+            add_assistant_message(state, decision.reply_text)
+            estimate_ready = bool(state["object_card"]["estimate"]["sections"])
+            return {
+                "reply_text": decision.reply_text,
+                "emotion": decision.emotion,
+                "stage": state["stage"],
+                "object_card": state["object_card"],
+                "estimate_ready": estimate_ready,
+                "guardrail": {
+                    "category": decision.category,
+                    "action": decision.action,
+                    "source": decision.source,
+                },
+            }
+
+        # valid → обычный ход. intent берём из триажа (не делаем второй вызов).
         add_user_message(state, user_message, image)
         update_object_card(user_message, state)
-        intent = detect_intent(user_message)
-        if approved:
-            intent = "approval"
+        intent = "approval" if approved else (decision.intent or "answer")
         reply_text = route_stage(state, intent, catalog=catalog, index=index)
         add_assistant_message(state, reply_text)
 
@@ -450,4 +477,5 @@ def chat(user_message, state, image=None, catalog=None, index=None, approved=Fal
         "stage": state["stage"],
         "object_card": state["object_card"],
         "estimate_ready": estimate_ready,
+        "guardrail": {"category": "valid", "action": "PASS", "source": decision.source},
     }

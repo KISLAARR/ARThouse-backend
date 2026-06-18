@@ -179,8 +179,18 @@ class AIForemanService:
 
     # ---------- общий ход диалога ----------
 
+    @staticmethod
+    def _user_text_for_db(message, result):
+        """Маскируем injection/ПДн в сохраняемом сообщении (бриф: «не хранить»)."""
+        guardrail = result.get("guardrail") or {}
+        if guardrail.get("category") in ("injection", "sensitive_pii"):
+            return f"[скрыто: {guardrail['category']}]"
+        return message or "[фото]"
+
     def _run_turn(self, thread, message, image, *, object_card=None,
-                  survey=None, premise_rooms=None, approved=False, persist_messages=True):
+                  survey=None, premise_rooms=None, approved=False):
+        """Прогоняет ход диалога, сохраняет состояние и пару сообщений.
+        Возвращает (result, user_message, assistant_message)."""
         if not llm_client.is_configured():
             raise HTTPException(
                 status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -204,15 +214,19 @@ class AIForemanService:
         except llm_client.LLMRequestError as e:
             raise HTTPException(status.HTTP_502_BAD_GATEWAY, f"Ошибка ИИ-провайдера: {e}")
 
-        # сохраняем состояние и историю сообщений
+        # сохраняем состояние и пару сообщений (с маскировкой ПДн/injection)
         self._sanitize_history(state)
         self.repo.set_context(thread, state)
-        if persist_messages:
-            self.repo.create_message(thread.id, AIForemanMessageRole.USER, message or "[фото]")
-            self.repo.create_message(thread.id, AIForemanMessageRole.ASSISTANT, result["reply_text"])
+        user_message = self.repo.create_message(
+            thread.id, AIForemanMessageRole.USER,
+            self._user_text_for_db(message, result),
+        )
+        assistant_message = self.repo.create_message(
+            thread.id, AIForemanMessageRole.ASSISTANT, result["reply_text"]
+        )
 
         self._add_front_mirrors(result["object_card"])
-        return result
+        return result, user_message, assistant_message
 
     # ---------- эндпоинт /ai-foreman/chat (контракт фронта) ----------
 
@@ -223,7 +237,7 @@ class AIForemanService:
             title = (req.message or "ИИ-прораб").strip()[:60] or "ИИ-прораб"
             thread = self.repo.create_thread(user_id=user_id, title=title)
 
-        result = self._run_turn(
+        result, _, _ = self._run_turn(
             thread, req.message, req.image,
             object_card=req.object_card, survey=req.survey,
             premise_rooms=req.premise_rooms, approved=req.approved,
@@ -239,6 +253,7 @@ class AIForemanService:
             "estimate_ready": result["estimate_ready"],
             "thread_id": thread.id,
             "project_map_data": self._project_map_data(card),
+            "guardrail": result.get("guardrail"),
             "source": "ai_foreman",
         }
 
@@ -247,14 +262,8 @@ class AIForemanService:
     def send_message(self, user_id: int, thread_id: int, data: AIForemanMessageCreate):
         thread = self._check_thread_access(user_id, thread_id)
 
-        user_message = self.repo.create_message(
-            thread_id, AIForemanMessageRole.USER, data.body
-        )
-        result = self._run_turn(
-            thread, data.body, data.image, persist_messages=False
-        )
-        assistant_message = self.repo.create_message(
-            thread_id, AIForemanMessageRole.ASSISTANT, result["reply_text"]
+        result, user_message, assistant_message = self._run_turn(
+            thread, data.body, data.image
         )
 
         return {

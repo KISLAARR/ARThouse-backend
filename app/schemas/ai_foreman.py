@@ -50,6 +50,8 @@ class AIForemanSendMessageResponse(BaseModel):
     stage: str = "goal"
     object_card: Dict[str, Any] = Field(default_factory=dict)
     estimate_ready: bool = False
+    # Слой 2: результат входного триажа (category/action/source), если был блок.
+    guardrail: Optional[Dict[str, Any]] = None
 
 
 class AIForemanChatRequest(BaseModel):
@@ -76,4 +78,5 @@ class AIForemanChatResponse(BaseModel):
     thread_id: Optional[int] = None
     # Данные для редактора карты: комнаты с размерами из object_card.
     project_map_data: Optional[Dict[str, Any]] = None
+    guardrail: Optional[Dict[str, Any]] = None
     source: str = "ai_foreman"
